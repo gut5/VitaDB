@@ -13,29 +13,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.x
-            2.1.x
+          dotnet-version: 8.0.x
 
-      - name: Restore
-        run: dotnet restore VitaDB.sln
+      - run: dotnet restore VitaDB.sln
 
-      - name: Build
-        run: dotnet build VitaDB.sln -c Release --no-restore
-
-      - name: Publish Linux x64
-        run: |
-          dotnet publish VitaDB.csproj \
-            -c Release \
-            -r linux-x64 \
-            --self-contained true \
-            -o publish
+      - run: dotnet publish VitaDB.csproj \
+          -c Release \
+          -r linux-x64 \
+          --self-contained true \
+          -p:PublishSingleFile=true \
+          -o publish
 
       - name: Make executable
         run: chmod +x publish/VitaDB || true
