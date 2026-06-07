@@ -1,0 +1,47 @@
+name: Build Linux
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            2.1.x
+
+      - name: Restore
+        run: dotnet restore VitaDB.sln
+
+      - name: Build
+        run: dotnet build VitaDB.sln -c Release --no-restore
+
+      - name: Publish Linux x64
+        run: |
+          dotnet publish VitaDB.csproj \
+            -c Release \
+            -r linux-x64 \
+            --self-contained true \
+            -o publish
+
+      - name: Make executable
+        run: chmod +x publish/VitaDB || true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VitaDB-linux-x64
+          path: publish/
