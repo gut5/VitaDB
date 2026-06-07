@@ -21,12 +21,15 @@ jobs:
 
       - run: dotnet restore VitaDB.sln
 
-      - run: dotnet publish VitaDB.csproj \
-          -c Release \
-          -r linux-x64 \
-          --self-contained true \
-          -p:PublishSingleFile=true \
-          -o publish
+
+        run: |
+          dotnet publish VitaDB.csproj \
+            -c Release \
+            -r linux-x64 \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -o publish
+
 
       - name: Make executable
         run: chmod +x publish/VitaDB || true
